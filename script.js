@@ -522,13 +522,11 @@ async function revealMessage() {
     // let the user gently rotate the ambient field with the mouse afterward
     enableDriftParallax();
 
-    // بعد ما تنتهي الرسالة الأخيرة، انتقل لصفحة المزحة (don.html)
-    // REDIRECT_DELAY: كم ميلي ثانية ينتظر قبل الانتقال (3000 = 3 ثواني)
-    const REDIRECT_DELAY = 3000;
+// بعد ما تنتهي الرسالة الأخيرة، أي ضغطة بالصفحة تنقله لصفحة المزحة
     const REDIRECT_URL = 'don.html';
-    setTimeout(() => {
+    sceneReveal.addEventListener('click', () => {
       window.location.href = REDIRECT_URL;
-    }, REDIRECT_DELAY);
+    }, { once: true });
   }
 
   function enableDriftParallax() {
