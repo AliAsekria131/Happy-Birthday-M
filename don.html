@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🐴</title>
+<style>
+  /* =====================================================================
+     don.html — صفحة المزحة
+     حمار مرسوم بالكامل بـ CSS (بدون صور، بدون مكتبات) يتحرك ويهز أذنيه
+     ويرقص، مع صوت يشتغل تلقائيًا من ملف mp3 محلي.
+     ===================================================================== */
+
+  :root {
+    --sky-top: #ff9d5c;
+    --sky-bottom: #2b1a4a;
+    --ground: #3a2a1e;
+    --ground-dark: #2a1d14;
+    --donkey-body: #8b6b52;
+    --donkey-dark: #6b4f3a;
+    --donkey-light: #a8846a;
+    --hoof: #2e211a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 75%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* ---------------- ground ---------------- */
+  .ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 22%;
+    background: linear-gradient(to bottom, var(--ground) 0%, var(--ground-dark) 100%);
+  }
+
+  .ground::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #4a3626 0px, #4a3626 40px,
+      #3a2a1e 40px, #3a2a1e 80px
+    );
+  }
+
+  /* ---------------- caption text ---------------- */
+  .caption {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #fff6e8;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .caption h1 {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    font-weight: 800;
+  }
+
+  .caption p {
+    margin-top: 0.4rem;
+    font-size: clamp(0.9rem, 2.4vw, 1.1rem);
+    opacity: 0.85;
+  }
+
+  /* ---------------- donkey ---------------- */
+  .donkey-wrap {
+    position: relative;
+    width: 320px;
+    height: 300px;
+    margin-bottom: 4%;
+    animation: bob 0.9s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-14px) rotate(-1.5deg); }
+  }
+
+  .donkey {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* body */
+  .d-body {
+    position: absolute;
+    left: 60px;
+    top: 110px;
+    width: 170px;
+    height: 100px;
+    background: var(--donkey-body);
+    border-radius: 55% 60% 50% 50% / 60% 60% 45% 45%;
+    box-shadow: inset -10px -10px 20px rgba(0,0,0,0.25);
+  }
+
+  /* legs */
+  .leg {
+    position: absolute;
+    width: 22px;
+    height: 90px;
+    background: var(--donkey-dark);
+    border-radius: 10px;
+    top: 175px;
+    transform-origin: top center;
+  }
+  .leg::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: -3px;
+    width: 28px;
+    height: 16px;
+    background: var(--hoof);
+    border-radius: 6px;
+  }
+
+  .leg--back-l { left: 68px;  animation: kick-back 0.9s ease-in-out infinite; }
+  .leg--back-r { left: 98px;  animation: kick-back 0.9s ease-in-out infinite reverse; }
+  .leg--front-l{ left: 168px; animation: kick-front 0.9s ease-in-out infinite reverse; }
+  .leg--front-r{ left: 198px; animation: kick-front 0.9s ease-in-out infinite; }
+
+  @keyframes kick-back {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(18deg); }
+  }
+  @keyframes kick-front {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(-18deg); }
+  }
+
+  /* tail */
+  .d-tail {
+    position: absolute;
+    left: 52px;
+    top: 130px;
+    width: 10px;
+    height: 50px;
+    background: var(--donkey-dark);
+    border-radius: 6px;
+    transform-origin: top center;
+    animation: tail-swing 0.6s ease-in-out infinite;
+  }
+  @keyframes tail-swing {
+    0%, 100% { transform: rotate(-10deg); }
+    50%      { transform: rotate(20deg); }
+  }
+
+  /* neck + head group, bounces slightly out of phase with body for comic effect */
+  .d-head-group {
+    position: absolute;
+    left: 190px;
+    top: 40px;
+    width: 130px;
+    height: 130px;
+    animation: head-nod 0.9s ease-in-out infinite;
+    transform-origin: bottom left;
+  }
+  @keyframes head-nod {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(8deg); }
+  }
+
+  .d-neck {
+    position: absolute;
+    left: -10px;
+    top: 60px;
+    width: 60px;
+    height: 70px;
+    background: var(--donkey-body);
+    border-radius: 30px;
+    box-shadow: inset -8px 0 14px rgba(0,0,0,0.2);
+  }
+
+  .d-head {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 100px;
+    height: 80px;
+    background: var(--donkey-body);
+    border-radius: 45% 50% 55% 55% / 55% 55% 55% 55%;
+    box-shadow: inset -8px -8px 16px rgba(0,0,0,0.2);
+  }
+
+  .d-snout {
+    position: absolute;
+    left: 68px;
+    top: 30px;
+    width: 55px;
+    height: 42px;
+    background: var(--donkey-light);
+    border-radius: 40% 60% 50% 50% / 55% 55% 45% 45%;
+  }
+
+  .d-nostril {
+    position: absolute;
+    width: 6px;
+    height: 9px;
+    background: #2e211a;
+    border-radius: 50%;
+  }
+  .d-nostril--l { left: 96px; top: 46px; }
+  .d-nostril--r { left: 108px; top: 50px; }
+
+  .d-eye {
+    position: absolute;
+    left: 50px;
+    top: 24px;
+    width: 14px;
+    height: 14px;
+    background: #1c140f;
+    border-radius: 50%;
+  }
+  .d-eye::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+  }
+
+  /* ears — the signature comic element, they flap independently */
+  .d-ear {
+    position: absolute;
+    width: 24px;
+    height: 62px;
+    background: var(--donkey-dark);
+    border-radius: 50% 50% 20% 20%;
+    top: -46px;
+    transform-origin: bottom center;
+  }
+  .d-ear::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    background: var(--donkey-light);
+    border-radius: 50% 50% 20% 20%;
+    opacity: 0.5;
+  }
+  .d-ear--l { left: 26px;  animation: ear-flap-l 0.7s ease-in-out infinite; }
+  .d-ear--r { left: 60px;  animation: ear-flap-r 0.7s ease-in-out infinite; }
+
+  @keyframes ear-flap-l {
+    0%, 100% { transform: rotate(-14deg); }
+    50%      { transform: rotate(6deg); }
+  }
+  @keyframes ear-flap-r {
+    0%, 100% { transform: rotate(14deg); }
+    50%      { transform: rotate(-6deg); }
+  }
+
+  /* mane */
+  .d-mane {
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    width: 18px;
+    height: 90px;
+    background: var(--donkey-dark);
+    border-radius: 10px;
+  }
+
+  /* dust puffs kicked up while dancing */
+  .dust {
+    position: absolute;
+    bottom: 20%;
+    width: 14px;
+    height: 14px;
+    background: rgba(200, 180, 150, 0.5);
+    border-radius: 50%;
+    animation: dust-puff 0.9s ease-out infinite;
+    opacity: 0;
+  }
+  .dust--1 { left: 26%; animation-delay: 0s; }
+  .dust--2 { left: 44%; animation-delay: 0.3s; }
+  .dust--3 { left: 60%; animation-delay: 0.6s; }
+
+  @keyframes dust-puff {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    30%  { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-30px) scale(1.4); }
+  }
+
+  /* ---------------- sound toggle / status ---------------- */
+  .audio-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    color: #fff6e8;
+    font-size: 0.85rem;
+  }
+
+  .audio-bar button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* ---------------- reduced motion ---------------- */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="ground"></div>
+
+    <div class="caption">
+      <h1>🎉 يوه شو صرت حمار! 🐴</h1>
+      <p>عيد ميلاد سعيد... بس خد هالحمار هدية 😂</p>
+    </div>
+
+    <div class="donkey-wrap">
+      <div class="donkey">
+        <div class="d-tail"></div>
+        <div class="leg leg--back-l"></div>
+        <div class="leg leg--back-r"></div>
+        <div class="leg leg--front-l"></div>
+        <div class="leg leg--front-r"></div>
+        <div class="d-body"></div>
+
+        <div class="d-head-group">
+          <div class="d-neck"></div>
+          <div class="d-mane"></div>
+          <div class="d-ear d-ear--l"></div>
+          <div class="d-ear d-ear--r"></div>
+          <div class="d-head"></div>
+          <div class="d-snout"></div>
+          <div class="d-nostril d-nostril--l"></div>
+          <div class="d-nostril d-nostril--r"></div>
+          <div class="d-eye"></div>
+        </div>
+      </div>
+
+      <div class="dust dust--1"></div>
+      <div class="dust dust--2"></div>
+      <div class="dust dust--3"></div>
+    </div>
+  </div>
+
+  <!--
+    مكان ملف الصوت: حط ملف الـ mp3 تبعك بجانب don.html بنفس المجلد
+    وسمّيه exactly:  don-song.mp3
+    (أو غيّر اسم الملف بالسطر تحت داخل src="...").
+  -->
+  <audio id="don-audio" src="don-song.mp3" loop></audio>
+
+  <div class="audio-bar">
+    <button id="audio-toggle" aria-label="تشغيل/إيقاف الصوت">🔊</button>
+    <span id="audio-status">جاري التشغيل...</span>
+  </div>
+
+  <script>
+    const audio = document.getElementById('don-audio');
+    const toggleBtn = document.getElementById('audio-toggle');
+    const statusEl = document.getElementById('audio-status');
+
+    // المتصفحات تمنع التشغيل التلقائي بصوت أحيانًا قبل أي تفاعل من المستخدم.
+    // بما إن هاي الصفحة بتنفتح بعد ضغطة المستخدم على الصفحة الأولى (الرسالة)،
+    // العنصر التفاعلي غالبًا موجود، فبيشتغل تلقائيًا. وإذا انحجب، بنعرض له
+    // رسالة يضغط فيها ليشغّل الصوت يدويًا.
+    audio.play().then(() => {
+      statusEl.textContent = 'جاري التشغيل...';
+    }).catch(() => {
+      statusEl.textContent = 'اضغط للتشغيل 🔈';
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        statusEl.textContent = 'جاري التشغيل...';
+        toggleBtn.textContent = '🔊';
+      } else {
+        audio.pause();
+        statusEl.textContent = 'متوقف';
+        toggleBtn.textContent = '🔇';
+      }
+    });
+
+    // لو المتصفح منع autoplay، أول نقرة بأي مكان بالصفحة تشغّل الصوت
+    document.body.addEventListener('click', () => {
+      if (audio.paused) audio.play();
+    }, { once: true });
+  </script>
+
+</body>
+</html>

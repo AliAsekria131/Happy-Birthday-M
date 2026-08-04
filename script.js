@@ -508,7 +508,7 @@
     await wait(300); // brief dramatic pause
   }
 
-  async function revealMessage() {
+async function revealMessage() {
     revealContent.classList.add('is-visible');
     revealTitle.classList.add('is-visible');
     await wait(900);
@@ -521,6 +521,14 @@
 
     // let the user gently rotate the ambient field with the mouse afterward
     enableDriftParallax();
+
+    // بعد ما تنتهي الرسالة الأخيرة، انتقل لصفحة المزحة (don.html)
+    // REDIRECT_DELAY: كم ميلي ثانية ينتظر قبل الانتقال (3000 = 3 ثواني)
+    const REDIRECT_DELAY = 3000;
+    const REDIRECT_URL = 'don.html';
+    setTimeout(() => {
+      window.location.href = REDIRECT_URL;
+    }, REDIRECT_DELAY);
   }
 
   function enableDriftParallax() {
