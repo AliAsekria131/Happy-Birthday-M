@@ -1,0 +1,429 @@
+/* =========================================================================
+   A MESSAGE FOR YOU — cinematic birthday experience
+   Palette:
+     --void      #07070c   base background
+     --ink       #0d0e17   secondary panels
+     --gold      #e8c07d   warm reveal / letter text
+     --gold-dim  #a98a52   secondary gold
+     --starlight #cfd6ff   cool particle / journey text
+     --violet    #6b7bd6   journey glow
+     --ember     #ff9d7a   celebration accent
+   Type:
+     display / letter text: 'Cormorant Garamond' (elegant serif)
+     ui / instructions:      'Inter' (clean, quiet sans)
+   ========================================================================= */
+
+:root {
+  --void: #07070c;
+  --ink: #0d0e17;
+  --gold: #e8c07d;
+  --gold-dim: #a98a52;
+  --starlight: #cfd6ff;
+  --violet: #6b7bd6;
+  --ember: #ff9d7a;
+
+  /* System font stacks only — no external font requests, so the file
+     works fully offline once downloaded. These fall back gracefully
+     across macOS, Windows, and Linux while keeping an elegant serif
+     for the emotional lines and a clean sans for UI text. */
+  --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  color-scheme: dark;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--void);
+  overflow: hidden;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  position: relative;
+  cursor: default;
+}
+
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Scene scaffolding                                                      */
+/* ---------------------------------------------------------------------- */
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6vh 8vw;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 1.4s ease;
+}
+
+.scene--active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Scene 1 — The Beginning                                                */
+/* ---------------------------------------------------------------------- */
+
+#scene-start { cursor: pointer; }
+
+.start-text {
+  max-width: 640px;
+}
+
+.line {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--starlight);
+  font-size: clamp(1.3rem, 3.4vw, 2.1rem);
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  min-height: 1.6em;
+}
+
+.line--2 {
+  margin-top: 1.6rem;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-family: var(--sans);
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  opacity: 0;
+}
+
+.line--2.is-visible { animation: soft-in 1.6s ease forwards; }
+
+.typewriter-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 0.9em;
+  background: var(--starlight);
+  margin-left: 3px;
+  vertical-align: -0.1em;
+  animation: blink 0.9s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes soft-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Scene 2 — The Journey                                                  */
+/* ---------------------------------------------------------------------- */
+
+.journey-message {
+  font-family: var(--serif);
+  font-weight: 500;
+  color: var(--starlight);
+  font-size: clamp(1.4rem, 4vw, 2.6rem);
+  max-width: 720px;
+  line-height: 1.5;
+  opacity: 0;
+  text-shadow: 0 0 40px rgba(107, 123, 214, 0.35);
+}
+
+.journey-message.is-visible {
+  animation: journey-fade 4.2s ease forwards;
+}
+
+@keyframes journey-fade {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.985); filter: blur(4px); }
+  12%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  82%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-10px) scale(1.01); filter: blur(3px); }
+}
+
+.journey-progress {
+  position: absolute;
+  bottom: 8vh;
+  display: flex;
+  gap: 10px;
+}
+
+.journey-progress__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(207, 214, 255, 0.2);
+  transition: background 0.6s ease, transform 0.6s ease;
+}
+
+.journey-progress__dot.is-active {
+  background: var(--gold);
+  transform: scale(1.4);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Scene 3 — The Gift                                                     */
+/* ---------------------------------------------------------------------- */
+
+.gift-wrap {
+  position: relative;
+  width: min(46vw, 260px);
+  height: min(46vw, 260px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-orb {
+  position: relative;
+  width: 40%;
+  height: 40%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: orb-float 5.5s ease-in-out infinite;
+}
+
+.gift-orb:hover,
+.gift-orb:focus-visible {
+  transform: scale(1.12);
+  outline: none;
+}
+
+.gift-orb__core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6e4 0%, var(--gold) 32%, var(--gold-dim) 68%, transparent 100%);
+  box-shadow:
+    0 0 30px 6px rgba(232, 192, 125, 0.55),
+    0 0 70px 20px rgba(232, 192, 125, 0.25);
+  animation: core-pulse 3.2s ease-in-out infinite;
+}
+
+.gift-orb:hover .gift-orb__core,
+.gift-orb:focus-visible .gift-orb__core {
+  box-shadow:
+    0 0 46px 10px rgba(232, 192, 125, 0.75),
+    0 0 110px 34px rgba(232, 192, 125, 0.4);
+}
+
+.gift-orb__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 192, 125, 0.35);
+  inset: -18%;
+}
+
+.gift-orb__ring--1 { animation: ring-spin 9s linear infinite; }
+.gift-orb__ring--2 {
+  inset: -34%;
+  border-color: rgba(107, 123, 214, 0.3);
+  animation: ring-spin 14s linear infinite reverse;
+}
+
+.gift-orb__glow {
+  position: absolute;
+  inset: -60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 192, 125, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+@keyframes orb-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes core-pulse {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.18); }
+}
+
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.gift-caption {
+  margin-top: 3.4rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+  color: var(--starlight);
+  opacity: 0;
+  min-height: 1.6em;
+}
+
+.gift-caption.is-visible { animation: soft-in 1.4s ease forwards; }
+
+/* ---------------------------------------------------------------------- */
+/* Scene 4 — The Reveal                                                   */
+/* ---------------------------------------------------------------------- */
+
+#scene-reveal {
+  overflow-y: auto;
+  padding-top: 10vh;
+  padding-bottom: 10vh;
+}
+
+.countdown {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(5rem, 22vw, 11rem);
+  color: var(--gold);
+  text-shadow: 0 0 60px rgba(232, 192, 125, 0.6);
+  line-height: 1;
+}
+
+.reveal-content {
+  max-width: 640px;
+  opacity: 0;
+}
+
+.reveal-content.is-visible {
+  opacity: 1;
+}
+
+.reveal-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  color: var(--gold);
+  text-shadow: 0 0 50px rgba(232, 192, 125, 0.5);
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.reveal-title.is-visible {
+  animation: title-in 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-title__emoji {
+  display: inline-block;
+  filter: drop-shadow(0 0 18px rgba(255, 157, 122, 0.6));
+}
+
+@keyframes title-in {
+  0%   { opacity: 0; transform: scale(0.85); filter: blur(6px); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+.reveal-lines {
+  margin-top: 2.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.reveal-lines p {
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 2.6vw, 1.55rem);
+  color: var(--starlight);
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.reveal-lines p.is-visible {
+  animation: soft-in 1.3s ease forwards;
+}
+
+.reveal-lines__final {
+  margin-top: 0.6rem;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem) !important;
+  color: var(--gold) !important;
+  font-weight: 500;
+  text-shadow: 0 0 30px rgba(232, 192, 125, 0.4);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Sound toggle                                                           */
+/* ---------------------------------------------------------------------- */
+
+.sound-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 192, 125, 0.3);
+  background: rgba(13, 14, 23, 0.6);
+  backdrop-filter: blur(6px);
+  color: var(--gold-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.sound-toggle:hover { color: var(--gold); border-color: rgba(232, 192, 125, 0.6); transform: scale(1.06); }
+.sound-toggle.is-muted #sound-wave { display: none; }
+.sound-toggle[hidden] { display: none; }
+
+/* ---------------------------------------------------------------------- */
+/* Screen shake (celebration moment)                                      */
+/* ---------------------------------------------------------------------- */
+
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20%      { transform: translate(-3px, 2px); }
+  40%      { transform: translate(3px, -2px); }
+  60%      { transform: translate(-2px, -2px); }
+  80%      { transform: translate(2px, 3px); }
+}
+
+body.is-shaking { animation: screen-shake 0.5s ease; }
+
+/* ---------------------------------------------------------------------- */
+/* Reduced motion                                                         */
+/* ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile adjustments                                                     */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .scene { padding: 6vh 6vw; }
+  .reveal-lines { gap: 0.9rem; }
+  .journey-progress { bottom: 6vh; }
+}

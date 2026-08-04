@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>A Message For You</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<style>
+.song {
+    display: none;
+}
+</style>
+<body>
+   
+       <audio class="song" autoplay controls loop>
+        <source src="music.mp3">
+        </source>
+        Your browser isn't invited for super fun audio time.
+    </audio>
+
+  <!-- Particle canvas sits behind everything, present for the whole experience -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Scene 1 : The Beginning -->
+  <section id="scene-start" class="scene scene--active">
+    <div class="start-text">
+      <p class="line line--1" data-text="وصلتك رسالة واحدة...&hellip;"></p>
+      <p class="line line--2" data-text="اضغط في أي مكان للبدء."></p>
+    </div>
+  </section>
+
+  <!-- Scene 2 : The Journey -->
+  <section id="scene-journey" class="scene">
+    <div class="journey-message" id="journey-message"></div>
+    <div class="journey-progress" aria-hidden="true">
+      <span class="journey-progress__dot"></span>
+      <span class="journey-progress__dot"></span>
+      <span class="journey-progress__dot"></span>
+      <span class="journey-progress__dot"></span>
+    </div>
+  </section>
+
+  <!-- Scene 3 : The Gift -->
+  <section id="scene-gift" class="scene">
+    <div class="gift-wrap">
+      <div class="gift-orb" id="gift-orb" role="button" tabindex="0" aria-label="Open your gift">
+        <div class="gift-orb__core"></div>
+        <div class="gift-orb__ring gift-orb__ring--1"></div>
+        <div class="gift-orb__ring gift-orb__ring--2"></div>
+        <div class="gift-orb__glow"></div>
+      </div>
+    </div>
+    <p class="gift-caption" id="gift-caption"></p>
+  </section>
+
+  <!-- Scene 4 : The Surprise / Reveal -->
+  <section id="scene-reveal" class="scene">
+    <div class="countdown" id="countdown"></div>
+
+    <div class="reveal-content" id="reveal-content">
+      <h1 class="reveal-title">
+        <span class="reveal-title__emoji">🎉</span>
+        عيد ميلاد سعيد!
+      </h1>
+
+      <div class="reveal-lines" id="reveal-lines">
+        <p data-line>عيد ميلاد سعيد يا أخي.</p>
+        <p data-line>أتمنى لك السعادة والنجاح والصحة وحياة مليئة بأجمل الذكريات.</p>
+        <p data-line data-pause>لم أستطع شراء هدية لك...&hellip;</p>
+        <p data-line>لذلك صنعت لك واحدة.</p>
+        <p data-line>كل تفصيل صغير...&hellip;</p>
+        <p data-line>صُنع خصيصًا لك.</p>
+        <p data-line class="reveal-lines__final">❤️ عيد ميلاد سعيد.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sound toggle, unobtrusive, always available once music starts -->
+  <button id="sound-toggle" class="sound-toggle" aria-label="Toggle sound" hidden>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M4 9v6h4l5 5V4L8 9H4z"/>
+      <path id="sound-wave" d="M16.5 8.5a5 5 0 0 1 0 7"/>
+    </svg>
+  </button>
+  
+    <!-- الكود الجديد المضاف لتشغيل الصوت عند الضغط للبدء -->
+  <script>
+    document.getElementById('scene-start').addEventListener('click', function() {
+      var audio = document.querySelector('.song');
+      if (audio) {
+        audio.play().catch(function(e) { console.log(e); });
+      }
+    }, { once: true });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
